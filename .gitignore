@@ -1,3 +1,3 @@
-./gt
-./imgs
+./gt/*
+./imgs/*
 .DS_Store
