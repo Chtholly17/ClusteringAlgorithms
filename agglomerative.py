@@ -13,13 +13,16 @@ class AgglomerativeClustering:
         @param {int} k: the number of clusters
         '''
         # the data to be clustered, which is a n*dim matrix
+        # at begin the number of clusters is equal to the number of points
+        # cluster number is reduced by 1 in each iteration, and the elements in the data matrix are reduced by 1
         self.data = data
+        # number of clusters, each point is a cluster at the beginning
         self.n = data.shape[0]
         # the number of clusters
         self.k = k
         # initialize the cluster, each point is assigned to a cluster, value range: 0~k-1
         self.cluster = np.zeros((self.n, 1))
-        self.cluster_size = np.zeros((self.k, 1))
+        self.cluster_size = np.zeros((self.n, 1))
         # initialize the distance matrix, the distance between two points
         self.distance = np.zeros((self.n, self.n))
         self.distance.fill(float('inf'))
@@ -56,6 +59,7 @@ class AgglomerativeClustering:
         # for each cluster, calculate the distance between it and the other clusters
         for i in range(self.n):
             for j in range(i + 1, self.n):
+                # use self.cluster_size[i] * self.data[i, :] / self.cluster_size[i] instead of self.data[i, :] to avoid the cluster size is 0
                 self.cluster_distance[i, j] = self.cal_distance(self.cluster_size[i] * self.data[i, :] / self.cluster_size[i],
                                                                 self.cluster_size[j] * self.data[j, :] / self.cluster_size[j])
                 self.cluster_distance[j, i] = self.cluster_distance[i, j]
@@ -99,6 +103,7 @@ class AgglomerativeClustering:
         # update the data, the points in the second cluster are assigned to the first cluster
         self.data[index1, :] = self.cluster_size[index1] * self.data[index1, :] / self.cluster_size[index1] + self.cluster_size[index2] * self.data[index2, :] / self.cluster_size[index2]
         self.data[index2, :] = 0
+        
 
     def fit(self):
         '''

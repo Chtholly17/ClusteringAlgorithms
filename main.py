@@ -47,7 +47,11 @@ def kmeans_test():
     
 def agglomerative_test():
     # random generate a data in dim 3(rgb) and 1000 points
-    data = np.random.randint(0,255,(100,3))
+    # data = np.random.randint(0,255,(100,3))
+    # sample 100 points from the gaussian distribution in RGB space
+    data = np.random.multivariate_normal([0,0,0], [[1,0,0],[0,1,0],[0,0,1]], 100)
+    # normalize the data in the range of [0,255]
+    data = (data - np.min(data))/(np.max(data) - np.min(data)) * 255
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(data[:,0],data[:,1],data[:,2],c=data/255)
@@ -61,10 +65,12 @@ def agglomerative_test():
     plt.show()
     
     # run the agglomerative algorithm, and set the number of clusters to 3
-    agglomerative = agg.AgglomerativeClustering( k = 10, data = data)
+    agglomerative = agg.AgglomerativeClustering( k = 5, data = data)
     agglomerative.fit()
     # get the result
     res = agglomerative.get_result()
+    # normalize the result in the range of [0,255]
+    res = (res - np.min(res))/(np.max(res) - np.min(res)) * 255
     
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -78,6 +84,29 @@ def agglomerative_test():
     ax.zaxis.label.set_color('blue')
     plt.show()
     
+def draw_Gaussian():
+    # draw a 2D gaussian distribution in RGB space, using contiuous color 
+    # to represent the probability of the point in the distribution
+    # value is range from 0 to 255
+    # the coordinate is in RGB space, and for each point in the distribution, its color is the same as the point
+    # the color of the axis label is red, green and blue
+    x = np.linspace(0,255,100)
+    y = np.linspace(0,255,100)
+    X,Y = np.meshgrid(x,y)
+    Z = np.exp(-((X-127.5)**2 + (Y-127.5)**2)/10000)
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(X,Y,Z,cmap='jet')
+    ax.set_xlabel('R')
+    ax.set_ylabel('G')
+    ax.set_zlabel('B')
+    # set the color of the axis label
+    ax.xaxis.label.set_color('red')
+    ax.yaxis.label.set_color('green')
+    ax.zaxis.label.set_color('blue')
+    plt.show()
+    
 if __name__ == '__main__':
     # kmeans_test()
     agglomerative_test()
+    # draw_Gaussian()
