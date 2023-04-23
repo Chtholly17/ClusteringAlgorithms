@@ -2,8 +2,17 @@ import Utilities as util
 import cv2
 import matplotlib.pyplot as plt
 import kmeans as km
+import deepKmeans as dk
 import numpy as np
+import cv2
+import numpy as np
+import torch
+import torch.nn.functional as F
+import torch.nn as nn
+from torchvision import models as tv
 import agglomerative as agg
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def kmeans_test():
     img = util.read_image('test.jpg')
@@ -127,9 +136,32 @@ def Eval_Kmeans():
     avg_acc = avg_acc/16
     print(avg_acc)
 
+
+# if use the feature to cluster algorithm, set the deep to True
+def deep_kmeans_test(deep = False):
+    # tarverse the folder data
+    data = []
+    vgg = util.VGG().to(device)
+    for i in range(0,20):
+        print("processing image "+str(i+1))
+        if deep == False:
+            img = util.get_img_pixel('data/'+str(i+1)+'.jpg')
+        else:
+            img = util.get_feature('data/'+str(i+1)+'.jpg',vgg)
+        
+        # add the feature to the data
+        data.append(img)
+    # apply the deepkmeans algorithm to data
+    deepkmeans = dk.deepKmeans(k = 2, data = data)
+    # run the algorithm
+    deepkmeans.train()
+    # get the cluster result
+    res = deepkmeans.get_cluster()
+    print(res)
     
 if __name__ == '__main__':
-    Eval_Kmeans()
+    # Eval_Kmeans()
+    deep_kmeans_test(deep=True)
     # kmeans_test()
     # agglomerative_test()
     # draw_Gaussian()
