@@ -26,5 +26,14 @@ def image_to_vector(image):
     '''
     return image.reshape(-1, 3)
 
-
+def accuracy(y_true, y_pred):
+    '''
+    @description: Calculate the Mean Square Error of the given prediction
+    @param {numpy.ndarray} y_true: The true labels of the data
+    @param {numpy.ndarray} y_pred: The predicted labels of the data
+    @return {float} accuracy: The MSE of the prediction
+    '''
+    # Calculate the Mean Square Error of the given prediction
+    accuracy = np.sum(y_true == y_pred) / len(y_true)
+    return accuracy
 

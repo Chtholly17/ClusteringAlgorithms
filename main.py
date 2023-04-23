@@ -7,7 +7,6 @@ import agglomerative as agg
 
 def kmeans_test():
     img = util.read_image('test.jpg')
-    # convert the image to grayscale
     vectorized = util.image_to_vector(img)
 
     
@@ -106,7 +105,31 @@ def draw_Gaussian():
     ax.zaxis.label.set_color('blue')
     plt.show()
     
+def Eval_Kmeans():
+    # for each images in the floder imgs, run the kmeans algorithm and save the result
+    # the result is saved in the folder results
+    avg_acc = 0
+    for i in range(1,16):
+        print("processing image "+str(i))
+        img = util.read_image('imgs/'+str(i)+'.jpg')
+        # convert the image to grayscale
+        vectorized = util.image_to_vector(img)
+        # run the kmeans algorithm
+        kmeans = km.kmeans(dim = 3, k = 2, data = vectorized)
+        kmeans.run()
+        res = kmeans.process_data([0,255])
+        
+        # read the ground truth from the folder gt
+        gt = util.read_image('gt/'+str(i)+'.png')
+        # calculate the accuracy using Mean Square Error
+        acc = util.accuracy(res,gt)
+        avg_acc = avg_acc + acc
+    avg_acc = avg_acc/16
+    print(avg_acc)
+
+    
 if __name__ == '__main__':
+    Eval_Kmeans()
     # kmeans_test()
-    agglomerative_test()
+    # agglomerative_test()
     # draw_Gaussian()
