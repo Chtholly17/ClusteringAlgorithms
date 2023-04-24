@@ -33,8 +33,9 @@ class deepKmeans:
         for i in range(k):
             self.centroids.append(torch.mean(torch.stack(self.data[10*i:10*(i+1)]),dim = 0))
         # initialize the cluster, each point is assigned to a cluster, value range: 0~k-1, cluster is a int numpy.ndarray
-        self.cluster = np.ones((len(data),1))
-        print(self.cluster)
+        # randomly assign each point to a cluster
+        self.cluster = np.random.randint(0,k,(len(data),1))
+        # print(self.cluster)
         
         # number of points in each cluster
         self.cluster_size = np.zeros((k,1))
@@ -114,8 +115,8 @@ class deepKmeans:
             self.update_centroids()
             self.update_cluster()
             iter += 1
-            print('iter: ',iter)
-            print('cluster size: ',self.cluster_size)
+            # print('iter: ',iter)
+            # print('cluster size: ',self.cluster_size)
             if self.is_converged():
                 break
             
@@ -127,3 +128,4 @@ class deepKmeans:
         return self.cluster
         
 
+# 0.5325, 0.4925, 0.5075000000000001, 0.5175, 0.49749999999999994, 0.5075000000000001

@@ -119,7 +119,7 @@ def Eval_Kmeans():
     # the result is saved in the folder results
     avg_acc = 0
     for i in range(1,16):
-        print("processing image "+str(i))
+        # print("processing image "+str(i))
         img = util.read_image('imgs/'+str(i)+'.jpg')
         # convert the image to grayscale
         vectorized = util.image_to_vector(img)
@@ -138,16 +138,16 @@ def Eval_Kmeans():
 
 
 # if use the feature to cluster algorithm, set the deep to True
-def deep_kmeans_test(deep = False):
+def deep_kmeans_test(scale=4):
     # tarverse the folder data
     data = []
     vgg = util.VGG().to(device)
     for i in range(0,20):
-        print("processing image "+str(i+1))
-        if deep == False:
+        # print("processing image "+str(i+1))
+        if scale == 0:
             img = util.get_img_pixel('data/'+str(i+1)+'.jpg')
         else:
-            img = util.get_feature('data/'+str(i+1)+'.jpg',vgg)
+            img = util.get_feature('data/'+str(i+1)+'.jpg',vgg,scale=scale)
         
         # add the feature to the data
         data.append(img)
@@ -157,11 +157,27 @@ def deep_kmeans_test(deep = False):
     deepkmeans.train()
     # get the cluster result
     res = deepkmeans.get_cluster()
-    print(res)
+    err = 0
+    for i in range(0,20):
+        if res[i] != i // 10:
+            err = err + 1
+    return err
     
 if __name__ == '__main__':
     # Eval_Kmeans()
-    deep_kmeans_test(deep=True)
+    iter_num = 1
+    image_num = 20
+    results = []
+    for scale in range(0,6):
+        print("scale = "+str(scale))
+        err = 0
+        for i in range(0,iter_num):
+            print("iter = "+str(i))
+            err = err + deep_kmeans_test(scale=scale)
+            print("err = "+str(deep_kmeans_test(scale=scale))+"  acc = "+str(1-err/(i+1)/image_num))
+        err = err / iter_num / image_num
+        results.append(err)
+    print(results)
     # kmeans_test()
     # agglomerative_test()
     # draw_Gaussian()
